@@ -77,5 +77,23 @@ namespace NEEFRA_API.DataAccess.Data
            Database.GetCollection<Artifact>("Artifacts");
         public IMongoCollection<Note> Notes =>
        Database.GetCollection<Note>("Notes");
+
+        public IMongoCollection<Cafe> Cafes =>
+    Database.GetCollection<Cafe>("Cafes");
+
+        public IMongoCollection<GiftShop> GiftShops =>
+            Database.GetCollection<GiftShop>("GiftShops");
+
+        public IMongoCollection<GovernoratePhoto> GovernoratePhotos =>
+            Database.GetCollection<GovernoratePhoto>("GovernoratePhotos");
+
+        public IMongoCollection<MuseumFacilities> MuseumFacilities =>
+            Database.GetCollection<MuseumFacilities>("MuseumFacilities");
+
+        public IMongoCollection<NearbyHotel> NearbyHotels =>
+            Database.GetCollection<NearbyHotel>("NearbyHotels");
+
+        public IMongoCollection<NearbyRestaurant> NearbyRestaurants =>
+            Database.GetCollection<NearbyRestaurant>("NearbyRestaurants");
     }
 }

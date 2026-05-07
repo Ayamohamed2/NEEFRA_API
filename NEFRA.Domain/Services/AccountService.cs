@@ -185,7 +185,7 @@ namespace NEEFRA.Core.Services
                 ExpireAt = DateTime.UtcNow.AddMinutes(30)
             });
 
-            var link = $"{origin}/api/account/reset-password?token={token}";
+            var link = $"https://nefra-reset-password.vercel.app/?token={token}";
 
         
             _jobClient.Enqueue<IEmailSender>(sender =>

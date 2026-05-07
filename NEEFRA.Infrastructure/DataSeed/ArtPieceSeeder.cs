@@ -7,7 +7,7 @@ using StackExchange.Redis;
 public static class ArtPieceSeeder
 {
     // ⚠️ Replace this with the actual Museum ObjectId from your DB
-    private const string MuseumId = "000000000000000000000001";
+    private const string MuseumId = "69f92ca87c0ecbe67075785c";
 
     public static void Seed(IMongoDatabase database)
     {

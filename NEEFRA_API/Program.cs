@@ -288,7 +288,20 @@ namespace NEEFRA_API
             builder.Services.AddScoped<IFavouriteService, FavouriteService>();
             builder.Services.AddScoped<IGovernorateService, GovernorateService>();
 
+            builder.Services.AddScoped<IGovernoratePhotoRepository, GovernoratePhotoRepository>();
+            builder.Services.AddScoped<IMuseumFacilitiesRepository, MuseumFacilitiesRepository>();
+            builder.Services.AddScoped<INearbyHotelRepository, NearbyHotelRepository>();
+            builder.Services.AddScoped<INearbyRestaurantRepository, NearbyRestaurantRepository>();
+            builder.Services.AddScoped<IGiftShopRepository, GiftShopRepository>();
+            builder.Services.AddScoped<ICafeRepository, CafeRepository>();
 
+            // Services
+            builder.Services.AddScoped<IGovernoratePhotoService, GovernoratePhotoService>();
+            builder.Services.AddScoped<IMuseumFacilitiesService, MuseumFacilitiesService>();
+            builder.Services.AddScoped<INearbyHotelService, NearbyHotelService>();
+            builder.Services.AddScoped<INearbyRestaurantService, NearbyRestaurantService>();
+            builder.Services.AddScoped<IGiftShopService, GiftShopService>();
+            builder.Services.AddScoped<ICafeService, CafeService>();
 
 
 
@@ -318,6 +331,8 @@ namespace NEEFRA_API
             ArtPieceSeeder.Seed(mongoContext.Database);
             ArtifactSeeder.Seed(mongoContext.Database);
             GovernorateSeeder.Seed(mongoContext.Database);
+
+          //  MuseumExtrasSeeder.Seed(mongoContext.Database);
             #endregion
 
             #region Middleware Pipeline

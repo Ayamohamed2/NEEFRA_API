@@ -1,27 +1,46 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NEEFRA.Core.Interfaces.IService;
-using NEEFRA.Core.Services;
-using Restaurant.API.Controllers;
+using System.Security.Claims;
 
-namespace NEEFRA.API.Controllers
+namespace NEEFRA_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
-    public class SmartRouteController : BaseController
+    [Route("api/[controller]")]
+    public class SmartRouteController : ControllerBase
     {
-        private readonly ISmartRouteService service;
+        private readonly ISmartRouteService _routeService;
 
-        public SmartRouteController(ISmartRouteService service)
+        public SmartRouteController(ISmartRouteService routeService)
         {
-            this.service = service;
+            _routeService = routeService;
         }
 
-        [HttpGet("Route")]
-        public async Task<IActionResult> GetRoute([FromQuery] string? groupId = null)
+        // GET api/SmartRoute?groupId=xxx&lat=30.0444&lng=31.2357
+        // groupId → optional, pass for group visit
+        // lat/lng → visitor's current GPS position (required for shortest path)
+        [HttpGet]
+        public async Task<IActionResult> GetRoute(
+            [FromQuery] string? groupId,
+            [FromQuery] double lat,
+            [FromQuery] double lng)
         {
-            var result = await service.GetRouteAsync(UserId, groupId);
-            return HandleResult(result);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            if (lat == 0 || lng == 0)
+                return BadRequest("lat and lng are required");
+
+            var result = await _routeService.GetRouteAsync(userId, groupId, lat, lng);
+
+            if (!result.IsSuccess)
+                return result.ErrorType == "NotFound"
+                    ? NotFound(result.Message)
+                    : BadRequest(result.Message);
+
+            return Ok(result.Data);
         }
     }
 }

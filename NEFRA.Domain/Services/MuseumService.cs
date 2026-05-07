@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using NEEFRA.Core.DTO.Service;
 using NEEFRA.Core.Entities;
 using NEEFRA.Core.Interfaces.IService;
+using NEEFRA.Domain.IReposatory;
 using NEEFRA_API.DataAccess.Reposatory.IReposatory;
 using NEEFRA_API.DTO;
 using NEEFRA_API.Models;
@@ -10,11 +11,13 @@ namespace NEEFRA.Core.Services
 {
     public class MuseumService : IMuseumService
     {
+  
         private readonly IMuseumRepository _museumRepo;
         private readonly ILogger<MuseumService> _logger;
 
         public MuseumService(IMuseumRepository museumRepo, ILogger<MuseumService> logger)
         {
+       
             _museumRepo = museumRepo;
             _logger = logger;
         }
@@ -30,7 +33,7 @@ namespace NEEFRA.Core.Services
             var museums = await _museumRepo.GetAllMuseumsAsync();
 
             var data = museums.Select(m => MapToDTO(m)).ToList();
-
+          
             _logger.LogInformation("Fetched {Count} museums", data.Count);
 
             return new() { IsSuccess = true, Data = data };

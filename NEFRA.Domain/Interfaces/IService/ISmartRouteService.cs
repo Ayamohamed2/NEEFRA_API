@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace NEEFRA.Core.Interfaces.IService
 {
+
     public interface ISmartRouteService
     {
-        Task<ServiceResult<List<RouteArtPieceDTO>>> GetRouteAsync(
-    string userId,
-    string? groupId);
+        Task<ServiceResult<RouteResultDTO>> GetRouteAsync(
+            string userId,
+            string? groupId,
+            double userLat,
+            double userLng);
     }
 }
