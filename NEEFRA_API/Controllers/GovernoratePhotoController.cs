@@ -20,7 +20,7 @@ namespace NEEFRA_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(string governorateId)
         {
-            var result = await _service.GetByGovernorateIdAsync(governorateId);
+            var result = await _service.GetByGovernorateIdAsync(governorateId, BaseUrl);
             return HandleResult(result);
         }
 

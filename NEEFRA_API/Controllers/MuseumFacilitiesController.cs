@@ -20,7 +20,7 @@ namespace NEEFRA_API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string museumId)
         {
-            var result = await _service.GetByMuseumIdAsync(museumId);
+            var result = await _service.GetByMuseumIdAsync(museumId,BaseUrl);
             return HandleResult(result);
         }
 

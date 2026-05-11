@@ -295,7 +295,7 @@ namespace NEEFRA_API
             builder.Services.AddScoped<IGiftShopRepository, GiftShopRepository>();
             builder.Services.AddScoped<ICafeRepository, CafeRepository>();
 
-            // Services
+            //// Services
             builder.Services.AddScoped<IGovernoratePhotoService, GovernoratePhotoService>();
             builder.Services.AddScoped<IMuseumFacilitiesService, MuseumFacilitiesService>();
             builder.Services.AddScoped<INearbyHotelService, NearbyHotelService>();
@@ -332,7 +332,7 @@ namespace NEEFRA_API
             ArtifactSeeder.Seed(mongoContext.Database);
             GovernorateSeeder.Seed(mongoContext.Database);
 
-          //  MuseumExtrasSeeder.Seed(mongoContext.Database);
+            MuseumExtrasSeeder.Seed(mongoContext.Database);
             #endregion
 
             #region Middleware Pipeline
