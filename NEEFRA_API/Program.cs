@@ -58,7 +58,7 @@ namespace NEEFRA_API
             {
                 options.EnableDetailedErrors = true;
                 options.KeepAliveInterval = TimeSpan.FromSeconds(10);
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
                 options.MaximumReceiveMessageSize = 102400;
                 options.StreamBufferCapacity = 10;
             });
