@@ -1,4 +1,5 @@
-﻿using NEEFRA.Core.Interfaces.IReposatory;
+﻿using NEEFRA.Core.Entities.AI;
+using NEEFRA.Core.Interfaces.IReposatory;
 using NEEFRA.Domain.IReposatory;
 using NEEFRA.Infrastructure.Reposatory;
 using NEEFRA_API.DataAccess.Data;
@@ -54,6 +55,14 @@ namespace Villa_API_Project.DataAccess.Reposatory
 
         public IArtifcatRepo Artifcat { get; private set; }
 
+        public IPieceDescriptionRepo PieceDescription { get; private set; }
+
+        public IAi_ARepo AI_a { get; private set; }
+
+        public IArabicPieceDescriptionRepo ArabicPieceDescription { get; private set; }
+
+        public ISpanishPieceDescriptionRepo SpanishPieceDescription { get; private set; }
+
         public UnitOfWork(MongoDbContext context)
         {
             _context = context;
@@ -86,6 +95,12 @@ namespace Villa_API_Project.DataAccess.Reposatory
 
             RefreshToken = new RefreshTokenReposatory(context);
             Artifcat = new ArtifactRepo(context);
+
+            PieceDescription = new PieceDescriptionRepo(context);
+            AI_a = new Ai_ARepo(context);
+
+            ArabicPieceDescription = new ArabicPieceDescriptionRepo(context);
+            SpanishPieceDescription = new SpanishPieceDescriptionRepo(context);
         }
 
 

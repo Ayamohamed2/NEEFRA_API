@@ -1,4 +1,5 @@
-﻿using NEEFRA.Core.DTO.AIDescription;
+﻿using Microsoft.AspNetCore.Hosting;
+using NEEFRA.Core.DTO.AIDescription;
 using NEEFRA.Core.DTO.Service;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,5 @@ namespace NEEFRA.Core.Interfaces.IService
 {
     public interface IAIService
     {
-        Task<ServiceResult<object>> AIDescription(AIDescriptionDTO dto, string userId);
-    }
+        Task<ServiceResult<object>> AIDescription(AIDescriptionDTO dto, string userId, IWebHostEnvironment env, string baseurl);    }
 }

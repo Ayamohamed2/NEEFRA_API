@@ -37,10 +37,13 @@ namespace NEEFRA.API.Controllers
 
                 for (int i = 0; i < result.Confidences.Count(); i++)
                 {
-                    var img = (await unit.ArtPiece.GetByFilterAsync(p => p.Name == result.Confidences[i].Label)).ImageUrl;
+                    var piece = (await unit.ArtPiece.GetByFilterAsync(p => p.Name == result.Confidences[i].Label));
+                    var img = piece.ImageUrl;
                     result.Confidences[i].ImageUrl = string.IsNullOrEmpty(img)
                     ? null
                 : BaseUrl + img;
+                    result.Confidences[i].Piece_id = piece.Id;
+
                 }
                 return Ok(result);
             }

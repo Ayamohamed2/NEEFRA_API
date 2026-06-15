@@ -37,9 +37,9 @@ namespace NEEFRA.API.Controllers
 
         [HttpGet("Summary")]
 
-        public async Task<IActionResult> Summary(string visitId)
+        public async Task<IActionResult> Summary(string visitId, string? groupId = null)
         {
-            var result =await service.Summary(visitId, BaseUrl);
+            var result =await service.Summary(visitId, BaseUrl,groupId);
 
             return HandleResult(result);
         }

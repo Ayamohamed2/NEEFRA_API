@@ -5,14 +5,14 @@ namespace NEEFRA.Core.Interfaces.IService
 {
     public interface IGovernoratePhotoService
     {
-        Task<ServiceResult<List<GovernoratePhotoDTO>>> GetByGovernorateIdAsync(string governorateId);
+        Task<ServiceResult<List<GovernoratePhotoDTO>>> GetByGovernorateIdAsync(string governorateId, string baseurl);
         Task<ServiceResult<GovernoratePhotoDTO>> AddAsync(CreateGovernoratePhotoDTO dto);
         Task<ServiceResult<bool>> DeleteAsync(string id);
     }
 
     public interface IMuseumFacilitiesService
     {
-        Task<ServiceResult<MuseumFacilitiesDTO>> GetByMuseumIdAsync(string museumId);
+        Task<ServiceResult<MuseumFacilitiesDTO>> GetByMuseumIdAsync(string museumId, string baseurl);
         Task<ServiceResult<MuseumFacilitiesDTO>> AddAsync(CreateMuseumFacilitiesDTO dto);
         Task<ServiceResult<MuseumFacilitiesDTO>> UpdateAsync(string museumId, UpdateMuseumFacilitiesDTO dto);
     }

@@ -8,9 +8,11 @@ namespace NEEFRA_API.DTO
         public bool IsWheelchairAccessible { get; set; }
         public bool HasAudioGuide { get; set; }
         public bool HasLockers { get; set; }
-        public string? WifiPassword { get; set; }
+
         public string? AudioGuideLanguages { get; set; }
-        public string? Notes { get; set; }
+       
+
+        public string? ImageUrl { get; set; }
     }
 
     public class CreateMuseumFacilitiesDTO
@@ -23,6 +25,8 @@ namespace NEEFRA_API.DTO
         public string? WifiPassword { get; set; }
         public string? AudioGuideLanguages { get; set; }
         public string? Notes { get; set; }
+        public string? ImageUrl { get; set; }
+
     }
 
     public class UpdateMuseumFacilitiesDTO
@@ -34,5 +38,7 @@ namespace NEEFRA_API.DTO
         public string? WifiPassword { get; set; }
         public string? AudioGuideLanguages { get; set; }
         public string? Notes { get; set; }
+        public string? ImageUrl { get; set; }
+
     }
 }

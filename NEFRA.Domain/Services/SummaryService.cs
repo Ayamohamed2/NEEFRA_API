@@ -14,14 +14,8 @@ namespace NEEFRA.Core.Services
     {
         private readonly IUnitOfWork unit;
         private readonly ILogger<SummaryService> _logger;
-        private readonly IRedisCacheService _cache;
 
-        // Cache keys
-        private const string FULL_SUMMARY_KEY = "summary:visit:{0}";           // {0} = visitId
-        private const string USER_SUMMARY_KEY = "summary:visit:{0}:user:{1}";  // {0} = visitId, {1} = userId
 
-        // Cache duration
-        private static readonly TimeSpan SummaryExpiry = TimeSpan.FromMinutes(30);
 
         // ── الـ JSON options نفس اللي في RedisCacheService ──────────────────
         private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -29,17 +23,17 @@ namespace NEEFRA.Core.Services
             PropertyNameCaseInsensitive = true
         };
 
-        public SummaryService(IUnitOfWork unit, ILogger<SummaryService> logger, IRedisCacheService cache)
+        public SummaryService(IUnitOfWork unit, ILogger<SummaryService> logger)
         {
             this.unit = unit;
             _logger = logger;
-            _cache = cache;
+  
         }
 
         // ─────────────────────────────────────────────
         // Summary (full visit)
         // ─────────────────────────────────────────────
-        public async Task<SummaryDTo<List<object>>> Summary(string visitId, string baseurl)
+        public async Task<SummaryDTo<List<object>>> Summary(string visitId,string baseurl, string? groupId=null)
         {
             _logger.LogInformation("Fetching full summary for visitId: {VisitId}", visitId);
 
@@ -48,19 +42,21 @@ namespace NEEFRA.Core.Services
                 _logger.LogWarning("Summary failed – visitId is empty");
                 return new() { IsSuccess = false, Message = "Visit Id is empty", ErrorType = "BadRequest" };
             }
-
-            var cacheKey = string.Format(FULL_SUMMARY_KEY, visitId);
-            var fromCache = await TryGetFromCacheAsync(cacheKey);
-            if (fromCache is not null)
+            
+            if (!string.IsNullOrEmpty(groupId))
             {
-                _logger.LogDebug("Cache hit – full summary for visitId: {VisitId}", visitId);
-                return fromCache;
+                string vId = visitId;
+                visitId = groupId;
+                var sum = await BuildSummaryAsync(visitId, baseurl,userFilter: null, vId);
+
+
+
+                return sum;
             }
 
             var summary = await BuildSummaryAsync(visitId, baseurl, userFilter: null);
 
-            if (summary.IsSuccess)
-                await SaveToCacheAsync(cacheKey, summary);
+            
 
             return summary;
         }
@@ -84,18 +80,11 @@ namespace NEEFRA.Core.Services
                 return new() { IsSuccess = false, Message = "User Id is empty", ErrorType = "BadRequest" };
             }
 
-            var cacheKey = string.Format(USER_SUMMARY_KEY, visitId, UserId);
-            var fromCache = await TryGetFromCacheAsync(cacheKey);
-            if (fromCache is not null)
-            {
-                _logger.LogDebug("Cache hit – user summary for visitId: {VisitId}, userId: {UserId}", visitId, UserId);
-                return fromCache;
-            }
+          
 
             var summary = await BuildSummaryAsync(visitId, baseurl, userFilter: UserId);
 
-            if (summary.IsSuccess)
-                await SaveToCacheAsync(cacheKey, summary);
+     
 
             return summary;
         }
@@ -104,7 +93,7 @@ namespace NEEFRA.Core.Services
         // Shared builder – eliminates duplicated logic
         // ─────────────────────────────────────────────
         private async Task<SummaryDTo<List<object>>> BuildSummaryAsync(
-            string visitId, string baseurl, string? userFilter)
+            string visitId, string baseurl,string? userFilter, string? vId=null)
         {
             var piecesInRoute = userFilter is null
                 ? await unit.RoutePiece.GetAllAsync(p => p.VisitId == visitId)
@@ -153,7 +142,7 @@ namespace NEEFRA.Core.Services
                     Viewerimg = string.IsNullOrEmpty(user?.ImageURL) ? null : baseurl + user.ImageURL,
                     p.PieceId,
                     PieceName = piece?.Name,
-                    PieceImg = string.IsNullOrEmpty(p.ImageURl) ? null : baseurl + p.ImageURl,
+                    PieceImg = string.IsNullOrEmpty(p.ImageURl) ? null : baseurl +"/"+ p.ImageURl,
                     p.VisitAt,
                     p.VisitOrder,
                     p.Visited,
@@ -161,7 +150,16 @@ namespace NEEFRA.Core.Services
                 };
             }).ToList();
 
-            var visit = await unit.Visit.GetByFilterAsync(v => v.Id == visitId);
+            Visit visit;
+            if (!string.IsNullOrEmpty(vId))
+            {
+                visit = await unit.Visit.GetByFilterAsync(v => v.Id == vId);
+
+            }
+            else
+            {
+                visit = await unit.Visit.GetByFilterAsync(v => v.Id == visitId);
+            }
             var museumName = (await unit.Museum.GetByIdAsync(visit?.MuseumId))?.Name;
 
             _logger.LogInformation("Summary built for visitId: {VisitId}, museum: {MuseumName}", visitId, museumName);
@@ -182,11 +180,7 @@ namespace NEEFRA.Core.Services
         // Public helper – call from VisitService when
         // the visit ends to bust all related cache
         // ─────────────────────────────────────────────
-        public async Task InvalidateSummaryCacheAsync(string visitId)
-        {
-            _logger.LogInformation("Invalidating summary cache for visitId: {VisitId}", visitId);
-            await _cache.RemoveByPatternAsync($"summary:visit:{visitId}*");
-        }
+      
 
         // ═══════════════════════════════════════════════════════════════════
         // Cache helpers
@@ -221,7 +215,6 @@ namespace NEEFRA.Core.Services
                     RawDataJson = rawDataJson
                 };
 
-                await _cache.SetAsync(key, wrapper, SummaryExpiry);
             }
             catch (Exception ex)
             {
@@ -229,35 +222,7 @@ namespace NEEFRA.Core.Services
             }
         }
 
-        private async Task<SummaryDTo<List<object>>?> TryGetFromCacheAsync(string key)
-        {
-            try
-            {
-                var wrapper = await _cache.GetAsync<SummaryCacheWrapper>(key);
-                if (wrapper is null) return null;
-
-                // نرجع الـ Data من الـ raw JSON — هيرجع كـ List<JsonElement>
-                // وده كافي لأن الـ controller هيـserializeه تاني للـ client
-                var data = JsonSerializer.Deserialize<List<object>>(wrapper.RawDataJson, _jsonOptions);
-                if (data is null) return null;
-
-                return new SummaryDTo<List<object>>
-                {
-                    IsSuccess = true,
-                    MuseumName = wrapper.MuseumName,
-                    VisitType = wrapper.VisitType,
-                    VisitStartTime = wrapper.VisitStartTime,
-                    VisitEndTime = wrapper.VisitEndTime,
-                    IsInsideMuseum = wrapper.IsInsideMuseum,
-                    Data = data
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to read summary from cache for key: {Key}", key);
-                return null;
-            }
-        }
+     
 
         // DTO داخلي للـ cache بس — مش بيتكشف للخارج
         private sealed class SummaryCacheWrapper

@@ -270,10 +270,7 @@ namespace NEEFRA.Core.Services
             if (group == null)
                 return new() { IsSuccess = false, Message = "Group not found", ErrorType = "NotFound" };
 
-            var isMember = (await unit.GroupMember.GetAllAsync(m => m.GroupId == group.Id && m.UserId == userId && m.IsActive)).Any();
-            if (isMember)
-                return new() { IsSuccess = false, Message = "You are already a member of this group", ErrorType = "BadRequest" };
-
+           
             var memberCount = (await unit.GroupMember.GetAllAsync(m => m.GroupId == group.Id && m.IsActive)).Count();
             if (memberCount >= group.NumberOf_members)
                 return new() { IsSuccess = false, Message = "Group is full", ErrorType = "BadRequest" };
@@ -434,9 +431,7 @@ namespace NEEFRA.Core.Services
             _logger.LogInformation("User leaving group – userId: {UserId}, groupId: {GroupId}", userId, groupId);
 
             var group = await unit.Group.GetByFilterAsync(g => g.Id == groupId);
-            if (group?.CreatorId == userId)
-                return new() { IsSuccess = false, Message = "Group creator cannot leave", ErrorType = "BadRequest" };
-
+           
             var member = await unit.GroupMember.GetByFilterAsync(gm => gm.GroupId == groupId && gm.UserId == userId);
             member.IsActive = false;
             await unit.GroupMember.UpdateAsync(m => m.Id == member.Id, member);

@@ -10,7 +10,7 @@ namespace NEEFRA.Core.Interfaces.IService
 {
     public interface ISummaryService
     {
-        Task<SummaryDTo<List<object>>> Summary(string visitId, string baseurl);
+        Task<SummaryDTo<List<object>>> Summary(string visitId, string baseurl, string? groupId = null);
         Task<SummaryDTo<List<object>>> SummaryForUser(string visitId, string baseurl, string UserId);
     }
 }

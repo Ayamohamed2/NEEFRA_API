@@ -2,9 +2,11 @@
 using MongoDB.Driver;
 using NEEFRA.Core.Entities;
 using NEEFRA.Core.Entities.Account;
+using NEEFRA.Core.Entities.AI;
 using NEEFRA.Core.Entities.Group;
 using NEEFRA.Core.Entities.Inerests;
 using NEEFRA.Core.Entities.Piece;
+using NEEFRA.Core.Entities.Pieces;
 using NEEFRA.Core.Entities.Route;
 using NEEFRA_API.Models;
 using NEEFRA_API.Settings;
@@ -95,5 +97,16 @@ namespace NEEFRA_API.DataAccess.Data
 
         public IMongoCollection<NearbyRestaurant> NearbyRestaurants =>
             Database.GetCollection<NearbyRestaurant>("NearbyRestaurants");
+        public IMongoCollection<Ai_A> Ai_As =>
+            Database.GetCollection<Ai_A>("Ai_As");
+        public IMongoCollection<PieceDescription> PieceDescriptions =>
+          Database.GetCollection<PieceDescription>("PieceDescriptions");
+
+
+        public IMongoCollection<ArabicPieceDescription> ArabicPieceDescriptions =>
+          Database.GetCollection<ArabicPieceDescription>("ArabicPieceDescriptions");
+
+        public IMongoCollection<SpanishPieceDescription> SpanishPieceDescriptions =>
+          Database.GetCollection<SpanishPieceDescription>("SpanishPieceDescriptions");
     }
 }

@@ -219,6 +219,7 @@ namespace NEEFRA.Core.Services
             MuseumId = v.MuseumId,
             VisitType = v.VisitType.ToString(),
             StartTime = v.StartTime,
+            GroupId=v.GroupId,
             IsInsideMuseum = v.IsInsideMuseum
         };
 

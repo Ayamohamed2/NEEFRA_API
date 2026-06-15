@@ -18,10 +18,18 @@ namespace NEEFRA.Core.Services
             _logger = logger;
         }
 
-        public async Task<ServiceResult<List<GovernoratePhotoDTO>>> GetByGovernorateIdAsync(string governorateId)
+        public async Task<ServiceResult<List<GovernoratePhotoDTO>>> GetByGovernorateIdAsync(string governorateId,string baseurl)
         {
             _logger.LogInformation("Fetching photos for governorate {GovernorateId}", governorateId);
             var photos = await _repo.GetByGovernorateIdAsync(governorateId);
+            if(photos.FirstOrDefault().PhotoUrl== "gv/luxor.avif")
+            {
+                photos.FirstOrDefault().PhotoUrl = "gv/Luxor.jpg";
+            }else if(photos.FirstOrDefault().PhotoUrl == "gv/aswan.avif")
+            {
+                photos.FirstOrDefault().PhotoUrl = "gv/aswan.jpg";
+            }
+            photos.FirstOrDefault().PhotoUrl = baseurl +"/"+ photos.FirstOrDefault().PhotoUrl;
             return new() { IsSuccess = true, Data = photos.Select(MapToDTO).ToList() };
         }
 

@@ -42,7 +42,13 @@ namespace NEEFRA.Domain.IReposatory
         public IArtifcatRepo Artifcat { get; }
 
 
+        public IPieceDescriptionRepo PieceDescription { get; }
 
+        public IAi_ARepo AI_a { get; }
+
+
+        public IArabicPieceDescriptionRepo ArabicPieceDescription { get; }
+        public ISpanishPieceDescriptionRepo SpanishPieceDescription { get; }
 
 
 

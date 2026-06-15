@@ -12,9 +12,9 @@ namespace NEEFRA.Core.DTO.AIDescription
     {
         [Required]
         public string VisitId { get; set; }
-        [Required]
-        public IFormFile Img { get; set; }
 
+        public string? lang { get; set; }
+        public string? type { get; set; }
         public string? PieceName { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using NEEFRA.Core.Interfaces.IService;
 using NEEFRA_API.DataAccess.Reposatory.IReposatory;
 using NEEFRA_API.DTO;
 using NEEFRA_API.Models;
+using static System.Net.WebRequestMethods;
 
 namespace NEEFRA.Core.Services
 {
@@ -18,12 +19,16 @@ namespace NEEFRA.Core.Services
             _logger = logger;
         }
 
-        public async Task<ServiceResult<MuseumFacilitiesDTO>> GetByMuseumIdAsync(string museumId)
+        public async Task<ServiceResult<MuseumFacilitiesDTO>> GetByMuseumIdAsync(string museumId,string baseurl)
         {
             _logger.LogInformation("Fetching facilities for museum {MuseumId}", museumId);
             var facilities = await _repo.GetByMuseumIdAsync(museumId);
-
-            if (facilities == null)
+            if (museumId == "69f92ca87c0ecbe67075785c")
+            {
+                facilities.ImageUrl = "https://images.squarespace-cdn.com/content/v1/56c13cc00442627a08632989/1589748843269-75TRXGEE5UBOBUH1BRTE/luxormuseum.jpg?format=2500w";
+            }
+            if (facilities.ImageUrl == "download.jfif") facilities.ImageUrl = "";
+                if (facilities == null)
                 return new() { IsSuccess = false, Message = "Facilities not found", ErrorType = "NotFound" };
 
             return new() { IsSuccess = true, Data = MapToDTO(facilities) };
@@ -49,7 +54,8 @@ namespace NEEFRA.Core.Services
                 HasLockers = dto.HasLockers,
                 WifiPassword = dto.WifiPassword,
                 AudioGuideLanguages = dto.AudioGuideLanguages,
-                Notes = dto.Notes
+                Notes = dto.Notes,
+                ImageUrl=dto.ImageUrl
             };
 
             var created = await _repo.AddAsync(facilities);
@@ -72,7 +78,7 @@ namespace NEEFRA.Core.Services
             existing.WifiPassword = dto.WifiPassword;
             existing.AudioGuideLanguages = dto.AudioGuideLanguages;
             existing.Notes = dto.Notes;
-
+            existing.ImageUrl = dto.ImageUrl;
             var updated = await _repo.UpdateAsync(museumId, existing);
             return new() { IsSuccess = true, Message = "Facilities updated successfully", Data = MapToDTO(updated!) };
         }
@@ -85,9 +91,10 @@ namespace NEEFRA.Core.Services
             IsWheelchairAccessible = f.IsWheelchairAccessible,
             HasAudioGuide = f.HasAudioGuide,
             HasLockers = f.HasLockers,
-            WifiPassword = f.WifiPassword,
+   
             AudioGuideLanguages = f.AudioGuideLanguages,
-            Notes = f.Notes
+            ImageUrl=f.ImageUrl
+     
         };
     }
 }

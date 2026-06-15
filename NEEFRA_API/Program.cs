@@ -28,6 +28,7 @@ using Hangfire.Mongo;
 using Hangfire.Mongo.Migration.Strategies;
 using NEEFRA_API.DataAccess.Reposatory.IReposatory;
 using NEEFRA_API.DataAccess.Reposatory;
+using YourApp.Services;
 namespace NEEFRA_API
 {
     public class Program
@@ -280,7 +281,7 @@ namespace NEEFRA_API
             builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
             builder.Services.AddScoped<INoteRepository, NoteRepository>();
 
-
+            builder.Services.AddHttpClient<ISummarizeService, SummarizeService>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<IMuseumService, MuseumService>();
             builder.Services.AddScoped<IVisitService, VisitService>();
@@ -317,7 +318,28 @@ namespace NEEFRA_API
             });
             #region HTTP Clients
             builder.Services.AddHttpClient<GradioService>()
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5)).ConfigureHttpClient(client =>
+                {
+                    client.Timeout = TimeSpan.FromMinutes(5); // ✅ زود من 100 ثانية
+                });
+            builder.Services.AddHttpClient<TtsService>().SetHandlerLifetime(TimeSpan.FromMinutes(5)).ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(5); // ✅ زود من 100 ثانية
+            });
+            builder.Services.AddHttpClient<SpanishTtsService>().SetHandlerLifetime(TimeSpan.FromMinutes(5)).ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(5); // ✅ زود من 100 ثانية
+            });
+           
+            builder.Services.AddHttpClient<ArabicTtsService>().SetHandlerLifetime(TimeSpan.FromMinutes(5)).ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(5); // ✅ زود من 100 ثانية
+            });
+            builder.Services.AddHttpClient<SummarizeService>().SetHandlerLifetime(TimeSpan.FromMinutes(5)).ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(5); // ✅ زود من 100 ثانية
+            });
+
             #endregion
 
             // ─────────────────────────────────────────────
@@ -331,8 +353,12 @@ namespace NEEFRA_API
             ArtPieceSeeder.Seed(mongoContext.Database);
             ArtifactSeeder.Seed(mongoContext.Database);
             GovernorateSeeder.Seed(mongoContext.Database);
-
+            PieceDescriptionSeeder.Seed(mongoContext.Database);
             MuseumExtrasSeeder.Seed(mongoContext.Database);
+
+            ArabicPieceDescriptionSeeder.Seed(mongoContext.Database);
+
+            SpanishPieceDescriptionSeeder.Seed(mongoContext.Database);
             #endregion
 
             #region Middleware Pipeline

@@ -16,7 +16,7 @@
         public string VisitType { get; set; }
         public DateTime? StartTime { get; set; }
         public bool IsInsideMuseum { get; set; }
-       
+        public string? GroupId { get; set; }
     }
 
     public class StartVisitDTO

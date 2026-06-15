@@ -9,6 +9,8 @@ namespace NEEFRA.Core.DTO
     public class LabelData
     {
         public string? Label { get; set; }
+        public string? ImageUrl { get; set; }
+
         public List<LabelConfidence>? Confidences { get; set; }
     }
 
@@ -16,5 +18,8 @@ namespace NEEFRA.Core.DTO
     {
         public string? Label { get; set; }
         public double Confidence { get; set; }
+        public string? ImageUrl { get; set; }
+
+        public string? Piece_id { get; set; }
     }
 }
